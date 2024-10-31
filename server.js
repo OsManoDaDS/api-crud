@@ -38,15 +38,17 @@ app.post('/users', async (req,res) => {
 })
 
 app.post('/login', async (req, res) => {
+
     const { email, password } = req.body; // Corrigido para 'password'
 
     try {
-        const user = await prisma.user.findUnique({
+        const user = await prisma.User.findUnique({
             where: { email: email }
         });
 
         if (!user) {
-            return res.status(404).json({ message: 'Usuário não encontrado' });
+            console.log(`Usuário não encontrado: ${email}`);
+            return res.status(405).json({ message: 'Usuário não encontrado' });
         }
 
         if (user.password !== password) { // Corrigido para 'password'
