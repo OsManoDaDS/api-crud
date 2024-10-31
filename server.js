@@ -38,28 +38,22 @@ app.post('/users', async (req,res) => {
 })
 
 app.post('/login', async (req, res) => {
-    const { email, senha } = req.body;
+    const { email, password } = req.body; // Corrigido para 'password'
 
     try {
-        // Encontre o usuário pelo e-mail
         const user = await prisma.user.findUnique({
             where: { email: email }
         });
 
-        // Verifique se o usuário existe
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
 
-        // Verifique se a senha está correta (comparação direta)
-        if (user.password !== senha) { // Corrigido para 'password' em vez de 'senha'
+        if (user.password !== password) { // Corrigido para 'password'
             return res.status(401).json({ message: 'Senha incorreta' });
         }
 
-        // Gere um token JWT
         const token = jwt.sign({ id: user.id, email: user.email }, SECRET, { expiresIn: '1h' });
-
-        // Retorne o token de autenticação
         res.status(200).json({ message: 'Login bem-sucedido', token: token });
     } catch (error) {
         res.status(500).json({ message: 'Erro no servidor', error: error.message });
