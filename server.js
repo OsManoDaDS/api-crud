@@ -4,10 +4,12 @@ import { PrismaClient } from "@prisma/client"; // Prisma
 import jwt from "jsonwebtoken";
 
 const app = express();
+const bodyParser = require('body-parser');
 const prisma = new PrismaClient(); // Prisma
 const PORT = 8081
 
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors());
 const SECRET = "seu_segredo_aqui";
 
@@ -48,10 +50,10 @@ app.post('/login', async (req, res) => {
 
         if (!user) {
             console.log(`Usuário não encontrado: ${email}`);
-            return res.status(405).json({ message: 'Usuário não encontrado' });
+            return res.status(406).json({ message: 'Usuário não encontrado' });
         }
 
-        if (user.password !== password) { // Corrigido para 'password'
+        if (user.password !== password) {
             return res.status(401).json({ message: 'Senha incorreta' });
         }
 
